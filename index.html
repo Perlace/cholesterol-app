@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bon pour moi ? Aliments et cholestérol</title>
+  <meta name="description" content="Cherchez un aliment et sachez en un coup d'œil s'il convient quand on a du cholestérol. 3 000 aliments de la table Ciqual, hors ligne.">
+  <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141513" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icones/icone.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icones/icone-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+
+<header class="entete" id="entete">
+  <h1>Bon pour moi ? <small>aliments et cholestérol</small></h1>
+  <div class="recherche" id="zone-recherche">
+    <svg class="loupe" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Beurre, œuf, saumon, fromage…" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Rechercher un aliment">
+    <button class="effacer cache" id="effacer" aria-label="Effacer">×</button>
+  </div>
+  <div class="filtres" id="filtres">
+    <button class="puce" data-verdict="" aria-pressed="true">Tous</button>
+    <button class="puce bon" data-verdict="bon" aria-pressed="false">Bon</button>
+    <button class="puce modere" data-verdict="modere" aria-pressed="false">Modéré</button>
+    <button class="puce limiter" data-verdict="limiter" aria-pressed="false">À limiter</button>
+    <select id="groupe" aria-label="Famille d'aliments"><option value="">Toutes les familles</option></select>
+  </div>
+</header>
+
+<main class="page">
+  <!-- Onglet Aliments -->
+  <section id="onglet-aliments">
+    <p class="compte" id="compte"></p>
+    <ul class="liste" id="liste"></ul>
+    <div class="vide" id="vide">
+      <h2>Que voulez-vous manger ?</h2>
+      <p>Tapez un aliment, ou filtrez par famille et par verdict.</p>
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+    <button class="plus cache" id="plus">Afficher plus</button>
+  </section>
+
+  <!-- Onglet Produits (Open Food Facts) -->
+  <section id="onglet-produits" class="cache">
+    <div class="bloc">
+      <h2>Produit de marque</h2>
+      <p>Cherchez un produit du commerce ou scannez son code-barres. Les données viennent d'Open Food Facts (connexion nécessaire).</p>
+      <div class="ligne">
+        <input id="q-produit" type="search" placeholder="Nom du produit ou code-barres" enterkeyhint="search" inputmode="search">
+        <button class="bouton" id="chercher-produit">Chercher</button>
+      </div>
+      <div class="ligne" style="margin-top:8px">
+        <button class="bouton secondaire" id="scanner" style="flex:1">📷 Scanner un code-barres</button>
+        <button class="bouton secondaire cache" id="stop-scan">Arrêter</button>
+      </div>
+      <video id="video" class="cache" playsinline muted></video>
+      <p class="etat" id="etat-produit"></p>
+    </div>
+    <ul class="liste" id="liste-produits"></ul>
+  </section>
+
+  <!-- Onglet Favoris -->
+  <section id="onglet-favoris" class="cache">
+    <p class="compte" id="compte-favoris"></p>
+    <ul class="liste" id="liste-favoris"></ul>
+    <div class="vide" id="vide-favoris"><h2>Aucun favori</h2><p>Ouvrez un aliment et touchez « Garder en favori » pour le retrouver ici.</p></div>
+  </section>
+
+  <!-- Onglet Conseils -->
+  <section id="onglet-conseils" class="cache">
+    <div class="avert">Cette application donne des repères, elle ne remplace ni votre médecin ni un diététicien. En cas de traitement ou de régime prescrit, suivez leurs consignes.</div>
+    <div class="bloc" id="conseils"></div>
+    <div class="bloc">
+      <h2>Comment est calculé le verdict ?</h2>
+      <p>Pour 100 g d'aliment, on regarde d'abord les <b>graisses saturées</b> (le facteur principal du mauvais cholestérol), puis le <b>cholestérol</b> lui-même, les <b>sucres</b>, le <b>sel</b> et l'<b>alcool</b>. Les <b>fibres</b> et les <b>graisses insaturées</b> (huiles végétales, poissons gras, oléagineux) rapportent des points. Les fritures ne peuvent pas être mieux que « avec modération ».</p>
+      <p>Verdict <b style="color:var(--bon)">Bon</b> : aucun point de pénalité. <b style="color:var(--modere)">Modéré</b> : 1 ou 2 points. <b style="color:var(--limiter)">À limiter</b> : 3 points ou plus.</p>
+      <p>Données : table Ciqual 2020 de l'ANSES (licence ouverte Etalab) et Open Food Facts (ODbL).</p>
+    </div>
+  </section>
+</main>
+
+<nav class="nav" id="nav">
+  <button data-onglet="aliments" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Aliments</button>
+  <button data-onglet="produits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V4h3M21 7V4h-3M3 17v3h3M21 17v3h-3M7 8v8M11 8v8M14 8v8M17 8v8"/></svg>Produits</button>
+  <button data-onglet="favoris"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17l-5.4 2.8 1.1-6.1L3.2 9.4l6.1-.8z"/></svg>Favoris</button>
+  <button data-onglet="conseils"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.7.5 1 1.3 1 2.1h5c0-.8.3-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>Conseils</button>
+</nav>
+
+<dialog class="fiche" id="fiche"><div class="fiche-corps" id="fiche-corps"></div></dialog>
+
+<script src="data/aliments.js?v=1"></script>
+<script src="evaluation.js?v=1"></script>
+<script src="app.js?v=2"></script>
+</body>
+</html>

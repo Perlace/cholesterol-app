@@ -14,10 +14,10 @@ Application web légère, sans dépendance, qui répond à une seule question : 
 À chaque `git push` sur `main`, GitHub Actions (`.github/workflows/apk.yml`) fabrique l'APK et le publie dans la version « derniere » du dépôt. Adresse de téléchargement, stable :
 
 ```
-https://github.com/COMPTE/cholesterol-app/releases/latest/download/bon-pour-moi.apk
+https://github.com/Perlace/cholesterol-app/releases/latest/download/bon-pour-moi.apk
 ```
 
-`node outils/qr.js https://github.com/COMPTE/cholesterol-app` génère `qr.html`, une page avec le QR code de cette adresse.
+`node outils/qr.js https://github.com/Perlace/cholesterol-app` génère `qr.html`, une page avec le QR code de cette adresse.
 
 L'APK est une coquille WebView (`android/`) autour de l'application web, signée avec `android/cle-signature.p12` (mot de passe dans `android/signature.properties`). **Gardez ces deux fichiers** : sans eux, une nouvelle version ne pourra plus s'installer par-dessus l'ancienne. Le dépôt étant privé, ce n'est pas un problème qu'ils y soient.
 

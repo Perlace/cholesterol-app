@@ -8,3 +8,4 @@ android/app/src/main/assets/
 android/.gradle/
 android/build/
 android/local.properties
+qr.html

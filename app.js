@@ -324,5 +324,5 @@
   chercher();
 
   // Hors ligne : uniquement quand on est servi en http(s), pas en ouvrant le fichier directement
-  if ("serviceWorker" in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(() => {});
+  if (!window.SANS_SW && "serviceWorker" in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(() => {});
 })();

@@ -15,7 +15,7 @@
   --police: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --fond: #141513; --carte: #1f201d; --texte: #ecebe6; --texte-2: #a8a79f; --bord: #33342f;
     --accent: #8fb8de; --accent-fond: #243444;
     --bon: #7fd49a; --bon-fond: #1c3524;
@@ -23,6 +23,14 @@
     --limiter: #f49b94; --limiter-fond: #46201d;
     --ombre: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
   }
+}
+:root[data-theme="dark"] {
+  --fond: #141513; --carte: #1f201d; --texte: #ecebe6; --texte-2: #a8a79f; --bord: #33342f;
+  --accent: #8fb8de; --accent-fond: #243444;
+  --bon: #7fd49a; --bon-fond: #1c3524;
+  --modere: #f0b464; --modere-fond: #3d2c14;
+  --limiter: #f49b94; --limiter-fond: #46201d;
+  --ombre: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -89,7 +97,8 @@ a { color: var(--accent); }
 .badge {
   color: #fff; font-weight: 700; font-size: .78rem; padding: 5px 10px; border-radius: 999px; white-space: nowrap;
 }
-@media (prefers-color-scheme: dark) { .badge { color: #111; } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .badge { color: #111; } }
+:root[data-theme="dark"] .badge { color: #111; }
 .vide { text-align: center; color: var(--texte-2); padding: 32px 12px; }
 .vide h2 { font-size: 1.05rem; color: var(--texte); margin: 0 0 6px; }
 .suggestions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
@@ -126,7 +135,8 @@ dialog.fiche::backdrop { background: rgba(0,0,0,.45); }
 .verdict.limiter { background: var(--limiter-fond); color: var(--limiter); }
 .verdict .pastille { width: 44px; height: 44px; border-radius: 50%; flex: 0 0 auto; display: grid; place-items: center; color: #fff; font-size: 1.3rem; font-weight: 800; }
 .verdict.bon .pastille { background: var(--bon); } .verdict.modere .pastille { background: var(--modere); } .verdict.limiter .pastille { background: var(--limiter); }
-@media (prefers-color-scheme: dark) { .verdict .pastille { color: #111; } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .verdict .pastille { color: #111; } }
+:root[data-theme="dark"] .verdict .pastille { color: #111; }
 .verdict strong { display: block; font-size: 1.1rem; }
 .verdict span { font-size: .9rem; opacity: .9; }
 .raisons { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }

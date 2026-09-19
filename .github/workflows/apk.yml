@@ -1,0 +1,42 @@
+name: Fabriquer l'APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+
+      - uses: android-actions/setup-android@v3
+        with: { packages: "platforms;android-35 build-tools;35.0.0" }
+
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: "8.10.2" }
+
+      - name: Copier l'application web dans l'APK
+        run: |
+          rm -rf android/app/src/main/assets/www
+          mkdir -p android/app/src/main/assets/www
+          cp -r index.html style.css app.js evaluation.js data icones lib manifest.webmanifest android/app/src/main/assets/www/
+
+      - name: Compiler
+        working-directory: android
+        run: gradle assembleRelease -PversionCode=${{ github.run_number }} -PversionName=1.${{ github.run_number }} --no-daemon
+
+      - name: Publier l'APK dans la version « derniere »
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk bon-pour-moi.apk
+          gh release view derniere >/dev/null 2>&1 || gh release create derniere --title "Bon pour moi, dernière version" --notes "APK Android, refabriqué à chaque modification."
+          gh release upload derniere bon-pour-moi.apk --clobber
+          gh release edit derniere --notes "APK Android, version 1.${{ github.run_number }}, fabriqué le $(date -u +%d/%m/%Y) depuis ${{ github.sha }}."

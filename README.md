@@ -9,7 +9,19 @@ Application web légère, sans dépendance, qui répond à une seule question : 
 - Favoris, partage, conseils généraux.
 - S'installe comme une application sur le téléphone (PWA), thème clair et sombre.
 
-## Utiliser
+## Sur Android : l'APK
+
+À chaque `git push` sur `main`, GitHub Actions (`.github/workflows/apk.yml`) fabrique l'APK et le publie dans la version « derniere » du dépôt. Adresse de téléchargement, stable :
+
+```
+https://github.com/COMPTE/cholesterol-app/releases/latest/download/bon-pour-moi.apk
+```
+
+`node outils/qr.js https://github.com/COMPTE/cholesterol-app` génère `qr.html`, une page avec le QR code de cette adresse.
+
+L'APK est une coquille WebView (`android/`) autour de l'application web, signée avec `android/cle-signature.p12` (mot de passe dans `android/signature.properties`). **Gardez ces deux fichiers** : sans eux, une nouvelle version ne pourra plus s'installer par-dessus l'ancienne. Le dépôt étant privé, ce n'est pas un problème qu'ils y soient.
+
+## Utiliser sur PC
 
 **Sur ordinateur** : double-cliquez sur `index.html`. C'est tout.
 

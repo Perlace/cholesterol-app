@@ -1,0 +1,31 @@
+plugins { id "com.android.application" }
+
+def signature = new Properties()
+file("../signature.properties").withInputStream { signature.load(it) }
+
+android {
+    namespace "fr.bonpourmoi"
+    compileSdk 35
+    defaultConfig {
+        applicationId "fr.bonpourmoi"
+        minSdk 24
+        targetSdk 35
+        versionCode project.hasProperty("versionCode") ? project.versionCode.toInteger() : 1
+        versionName project.hasProperty("versionName") ? project.versionName : "1.0"
+    }
+    signingConfigs {
+        release {
+            storeFile file("../cle-signature.p12")
+            storeType "pkcs12"
+            storePassword signature.motDePasse
+            keyAlias signature.alias
+            keyPassword signature.motDePasse
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.release }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
+
+dependencies { implementation "androidx.webkit:webkit:1.12.1" }

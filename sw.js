@@ -1,6 +1,6 @@
 // Cache l'application pour un usage hors ligne. Bumper VERSION à chaque mise à jour.
-const VERSION = "bpm-v1";
-const FICHIERS = ["./", "./index.html", "./style.css?v=2", "./app.js?v=2", "./evaluation.js?v=1", "./data/aliments.js?v=1", "./manifest.webmanifest", "./icones/icone.svg"];
+const VERSION = "bpm-v2";
+const FICHIERS = ["./", "./index.html", "./style.css?v=3", "./app.js?v=3", "./evaluation.js?v=1", "./data/aliments.js?v=1", "./lib/zxing.min.js", "./manifest.webmanifest", "./icones/icone.svg"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(FICHIERS)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", e => {

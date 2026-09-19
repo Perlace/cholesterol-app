@@ -232,32 +232,45 @@
   $("chercher-produit").addEventListener("click", () => chercherProduit($("q-produit").value));
   $("q-produit").addEventListener("keydown", e => { if (e.key === "Enter") chercherProduit(e.target.value); });
 
-  // Scanner de code-barres (API BarcodeDetector, Chrome et Android surtout)
-  let flux = null, minuteur = null;
+  // Scanner de code-barres : BarcodeDetector quand le navigateur l'a (Chrome Android),
+  // sinon la bibliothèque ZXing embarquée (WebView de l'APK, Safari, Firefox).
+  let flux = null, minuteur = null, lecteurZX = null;
   async function demarrerScan() {
-    const etat = $("etat-produit");
-    if (!("BarcodeDetector" in window) || !navigator.mediaDevices?.getUserMedia) {
-      etat.textContent = "Ce navigateur ne sait pas lire les codes-barres. Tapez les chiffres du code sous le code-barres.";
+    const etat = $("etat-produit"), video = $("video");
+    if (!navigator.mediaDevices?.getUserMedia) {
+      etat.textContent = "Ce navigateur ne donne pas accès à la caméra. Tapez les chiffres sous le code-barres.";
       $("q-produit").focus(); return;
     }
-    try {
-      flux = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-    } catch { etat.textContent = "Accès à la caméra refusé."; return; }
-    const video = $("video"); video.srcObject = flux; video.classList.remove("cache"); await video.play();
+    const natif = "BarcodeDetector" in window;
+    if (!natif && !window.ZXing) { etat.textContent = "Lecteur de code-barres indisponible. Tapez les chiffres sous le code-barres."; return; }
+    video.classList.remove("cache");
     $("scanner").classList.add("cache"); $("stop-scan").classList.remove("cache");
     etat.textContent = "Visez le code-barres…";
-    const detecteur = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e"] });
-    minuteur = setInterval(async () => {
-      try {
-        const codes = await detecteur.detect(video);
-        if (codes.length) { const c = codes[0].rawValue; arreterScan(); $("q-produit").value = c; chercherProduit(c); }
-      } catch {}
-    }, 350);
+    const trouve = c => { arreterScan(); $("q-produit").value = c; chercherProduit(c); };
+    try {
+      if (natif) {
+        flux = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+        video.srcObject = flux; await video.play();
+        const detecteur = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e"] });
+        minuteur = setInterval(async () => {
+          try { const codes = await detecteur.detect(video); if (codes.length) trouve(codes[0].rawValue); } catch {}
+        }, 350);
+      } else {
+        const indices = new Map([[ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.EAN_8, ZXing.BarcodeFormat.UPC_A, ZXing.BarcodeFormat.UPC_E]]]);
+        lecteurZX = new ZXing.BrowserMultiFormatReader(indices, 300);
+        await lecteurZX.decodeFromConstraints({ video: { facingMode: "environment" }, audio: false }, video, (res) => { if (res) trouve(res.getText()); });
+      }
+    } catch (e) {
+      arreterScan();
+      etat.textContent = "Accès à la caméra refusé. Autorisez la caméra pour l'application, ou tapez les chiffres du code.";
+    }
   }
   function arreterScan() {
     clearInterval(minuteur); minuteur = null;
+    if (lecteurZX) { try { lecteurZX.reset(); } catch {} lecteurZX = null; }
     if (flux) { flux.getTracks().forEach(t => t.stop()); flux = null; }
-    $("video").classList.add("cache"); $("scanner").classList.remove("cache"); $("stop-scan").classList.add("cache");
+    const video = $("video"); video.srcObject = null; video.classList.add("cache");
+    $("scanner").classList.remove("cache"); $("stop-scan").classList.add("cache");
   }
   $("scanner").addEventListener("click", demarrerScan);
   $("stop-scan").addEventListener("click", () => { arreterScan(); $("etat-produit").textContent = ""; });

@@ -3,3 +3,8 @@ outils/ciqual.xls
 outils/package-lock.json
 .DS_Store
 Thumbs.db
+android/app/build/
+android/app/src/main/assets/
+android/.gradle/
+android/build/
+android/local.properties
